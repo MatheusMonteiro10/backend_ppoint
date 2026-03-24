@@ -1,6 +1,5 @@
 package com.ppoint.backend.controller;
 
-import com.ppoint.backend.domain.User;
 import com.ppoint.backend.service.AuthService;
 import com.ppoint.backend.dto.LoginDTO;
 import com.ppoint.backend.dto.RegisterDTO;
