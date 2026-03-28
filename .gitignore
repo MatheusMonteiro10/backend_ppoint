@@ -32,14 +32,13 @@ build/
 ### VS Code ###
 .vscode/
 
-# 🔐 Arquivos de configuração sensíveis
+# Arquivos de configuração sensíveis
 application.yaml
 application.yml
-application.properties
 
-# 🔐 Variáveis de ambiente
+# Variáveis de ambiente
 .env
 
-# 🔐 Arquivos locais específicos
+# Arquivos locais específicos
 application-local.yaml
 application-dev.yaml
