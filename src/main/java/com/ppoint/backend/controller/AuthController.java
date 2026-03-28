@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
     Reposta esperada: API rodando!
 */
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

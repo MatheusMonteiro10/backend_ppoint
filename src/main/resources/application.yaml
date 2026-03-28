@@ -4,6 +4,10 @@ spring:
     username: postgres.evttzpxrdmuueumtaitv
     password: Cp1318rmabq
 
+    hikari:
+      data-source-properties:
+        prepareThreshold: 0
+
   jpa:
     hibernate:
       ddl-auto: update
