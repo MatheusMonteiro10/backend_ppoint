@@ -1,8 +1,10 @@
 package com.ppoint.backend.service;
 
 import com.ppoint.backend.domain.User;
+import com.ppoint.backend.exception.EmailAlreadyRegisteredException;
+import com.ppoint.backend.exception.InvalidCredentialsException;
+import com.ppoint.backend.exception.ResourceNotFoundException;
 import com.ppoint.backend.repository.UserRepository;
-import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,25 +24,24 @@ public class AuthService {
 
     public void register(String name, String email, String password) {
         if (repository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Email já cadastrado");
+            throw new EmailAlreadyRegisteredException("Email já cadastrado");
         }
 
         User user = new User();
-        //user.setId(UUID.randomUUID());
-        //setId desnecessário com a geração automática via Hibernate
         user.setInstagramUser(name);
         user.setEmail(email);
         user.setPassword(crypto.encrypt(password));
         user.setRole("USER");
+        user.setProvider("LOCAL");
 
         repository.save(user);
     }
 
     public String login(String email, String password) {
-        User user = repository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        User user = repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         if (!crypto.compare(password, user.getPassword())) {
-            throw new RuntimeException("Senha inválida");
+            throw new InvalidCredentialsException("Senha inválida");
         }
 
         return jwtService.generateToken(user.getEmail());
@@ -50,11 +51,11 @@ public class AuthService {
         var payload = googleAuthService.verify(token);
 
         if (payload == null) {
-            throw new RuntimeException("Token inválido");
+            throw new InvalidCredentialsException("Token do Google inválido");
         }
 
         if (!payload.getEmailVerified()) {
-            throw new RuntimeException("Email não verificado");
+            throw new InvalidCredentialsException("Email do Google não verificado");
         }
 
         String email = payload.getEmail();
@@ -77,6 +78,7 @@ public class AuthService {
             newUser.setGoogleId(googleId);
             newUser.setProvider("GOOGLE");
             newUser.setPicture(picture);
+            newUser.setRole("USER");
 
             return repository.save(newUser);
         });

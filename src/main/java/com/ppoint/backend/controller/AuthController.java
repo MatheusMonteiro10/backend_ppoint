@@ -1,12 +1,12 @@
 package com.ppoint.backend.controller;
 
-import com.google.api.client.auth.openidconnect.IdToken;
-import com.google.api.client.auth.openidconnect.IdTokenResponse;
+import com.ppoint.backend.dto.AuthResponseDTO;
 import com.ppoint.backend.dto.GoogleTokenDTO;
 import com.ppoint.backend.service.AuthService;
 import com.ppoint.backend.dto.LoginDTO;
 import com.ppoint.backend.dto.RegisterDTO;
-import com.ppoint.backend.service.GoogleAuthService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.*;
     Reposta esperada: API rodando!
 */
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -47,18 +46,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterDTO dto) {
+    public ResponseEntity<String> register(@Valid  @RequestBody RegisterDTO dto) {
         authService.register(dto.name(), dto.email(), dto.password());
-        return "Usuário criado com sucesso";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso");
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginDTO dto) {
-        return authService.login(dto.email(), dto.password());
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginDTO dto) {
+        String token = authService.login(dto.email(), dto.password());
+        return ResponseEntity.ok(new AuthResponseDTO(token));
     }
 
-    @PostMapping("/google")
-    public ResponseEntity<String> googleLogin(@RequestBody GoogleTokenDTO dto) {
-        return ResponseEntity.ok(authService.googleAuth(dto.token()));
+    @PostMapping("/login/google")
+    public ResponseEntity<AuthResponseDTO> googleLogin(@RequestBody GoogleTokenDTO dto) {
+        String token = authService.googleAuth(dto.token());
+        return ResponseEntity.ok(new AuthResponseDTO(token));
     }
 }
