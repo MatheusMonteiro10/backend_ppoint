@@ -1,4 +1,3 @@
 package com.ppoint.backend.dto;
 
-public record RegisterDTO(String name, String email, String password) {
-}
+public record RegisterDTO(String name, String email, String password) {}

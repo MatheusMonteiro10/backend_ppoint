@@ -1,8 +1,13 @@
 package com.ppoint.backend.controller;
 
+import com.google.api.client.auth.openidconnect.IdToken;
+import com.google.api.client.auth.openidconnect.IdTokenResponse;
+import com.ppoint.backend.dto.GoogleTokenDTO;
 import com.ppoint.backend.service.AuthService;
 import com.ppoint.backend.dto.LoginDTO;
 import com.ppoint.backend.dto.RegisterDTO;
+import com.ppoint.backend.service.GoogleAuthService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /*Passo a passo para teste:
@@ -35,20 +40,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService service;
+    private final AuthService authService;
 
-    public  AuthController(AuthService service) {
-        this.service = service;
+    public  AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/register")
     public String register(@RequestBody RegisterDTO dto) {
-        service.register(dto.name(), dto.email(), dto.password());
+        authService.register(dto.name(), dto.email(), dto.password());
         return "Usuário criado com sucesso";
     }
 
     @PostMapping("/login")
     public String login(@RequestBody LoginDTO dto) {
-        return service.login(dto.email(), dto.password());
+        return authService.login(dto.email(), dto.password());
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<String> googleLogin(@RequestBody GoogleTokenDTO dto) {
+        return ResponseEntity.ok(authService.googleAuth(dto.token()));
     }
 }
