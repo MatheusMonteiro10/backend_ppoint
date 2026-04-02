@@ -83,7 +83,7 @@
         const tokenGoogle = response.credential;
 
         try {
-            const responseBackend = await fetch(`${API}/auth/google`, {
+            const responseBackend = await fetch(`${API}/auth/login/google`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token: tokenGoogle })
