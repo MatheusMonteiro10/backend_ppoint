@@ -22,13 +22,18 @@ public class AuthService {
         this.googleAuthService = googleAuthService;
     }
 
-    public void register(String name, String email, String password) {
+    public void register(String username, String email, String password, String confirmPassword) {
+
+        if (!password.equals(confirmPassword)) {
+            throw new InvalidCredentialsException("As senhas não conferem");
+        }
+
         if (repository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyRegisteredException("Email já cadastrado");
         }
 
         User user = new User();
-        user.setInstagramUser(name);
+        user.setInstagramUser(username);
         user.setEmail(email);
         user.setPassword(crypto.encrypt(password));
         user.setRole("USER");
@@ -59,9 +64,7 @@ public class AuthService {
         }
 
         String email = payload.getEmail();
-        String name = (String) payload.get("name");
         String googleId = payload.getSubject();
-        String picture = (String) payload.get("picture");
 
         User user = repository.findByEmail(email).map(existing -> {
             // Se já existe, opcional vincular conta
@@ -77,7 +80,6 @@ public class AuthService {
             newUser.setEmail(email);
             newUser.setGoogleId(googleId);
             newUser.setProvider("GOOGLE");
-            newUser.setPicture(picture);
             newUser.setRole("USER");
 
             return repository.save(newUser);

@@ -17,7 +17,7 @@ import java.util.List;
 public class SecurityConfig {
 
     // Em produção, configurar via variável de ambiente: ALLOWED_ORIGINS=https://siteexemplo.com
-    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:8080}")
+    @Value("${cors.allowed-origins[0]}")
     private List<String> allowedOrigins;
 
     @Bean

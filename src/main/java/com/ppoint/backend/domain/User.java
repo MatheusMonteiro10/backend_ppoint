@@ -16,14 +16,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String instagramUser;
-
     @Column(unique = true)
     private String email;
     private String password;
     private String role;
+    private String instagramUser;
     private String provider;
     private String googleId;
-    private String picture;
-
 }
